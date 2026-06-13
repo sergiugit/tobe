@@ -17,20 +17,45 @@ ToBe connects to YouTube through InnerTube (the same API YouTube's own web clien
 
 Video data is cached locally. Channel avatars and metadata are fetched on demand and stored for offline display.
 
-## Build from source
+## Prerequisites
 
-Requires Rust and the Tauri v2 prerequisites for your platform:
+- **Rust** (install via [rustup](https://rustup.rs/) or your package manager)
+- **Tauri v2 system dependencies** — on Debian/Ubuntu:
 
 ```
-cd src-tauri
+sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+```
+
+Other distros: see [Tauri's official guide](https://v2.tauri.app/start/prerequisites/).
+
+- **yt-dlp** (recommended for video streaming fallback):
+
+```
+sudo apt install yt-dlp
+```
+
+## Install & Build
+
+```
+git clone https://github.com/sergiugit/tobe.git
+cd tobe/src-tauri
 cargo build --release
 cp target/release/tobe ../tobe
 ```
 
-Run from the project root:
+## Run
+
+From the project root:
 
 ```
+cd tobe
 ./tobe
+```
+
+To see debug output:
+
+```
+./tobe 2>&1 | tee /tmp/tobe.log
 ```
 
 ## Tech stack
