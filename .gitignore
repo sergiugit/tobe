@@ -31,3 +31,6 @@ Status.txt
 *.tar.gz
 *.jpeg
 start.sh
+
+# Flatpak builder cache
+.flatpak-builder/
