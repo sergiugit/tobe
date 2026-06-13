@@ -362,6 +362,11 @@ pub async fn log_message(msg: String) {
 }
 
 #[command]
+pub async fn get_app_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+#[command]
 pub async fn fetch_more_channel_videos(channel_id: String, continuation_token: String) -> Result<Vec<Video>, String> {
     crate::services::invidious::fetch_more_channel_videos(&channel_id, &continuation_token).await
 }

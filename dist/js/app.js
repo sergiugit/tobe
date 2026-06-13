@@ -1,15 +1,15 @@
 // Tauri v2 IPC bridge
 const invoke = window.__TAURI_INTERNALS__.invoke;
-import { getSubscriptions, addSubscription, removeSubscription, updateSubscriptionAvatar, getSubscribedFeed, getChannelVideos, getChannelLive, getVideo, getSuggestions, searchChannels, getVideoUrl, getComments, getChannelAvatar, getVideoFormats, getThumbnails } from './api.js';
+import { getSubscriptions, addSubscription, removeSubscription, updateSubscriptionAvatar, getAppVersion, getSubscribedFeed, getChannelVideos, getChannelLive, getVideo, getSuggestions, searchChannels, getVideoUrl, getComments, getChannelAvatar, getVideoFormats, getThumbnails } from './api.js';
 import { renderSubscriptionItem } from './subscriptions.js';
 
 function debug(msg) {
   if (window.__TAURI_INTERNALS__) window.__TAURI_INTERNALS__.invoke('log_message', { msg }).catch(() => {});
   document.title = 'ToBe - ' + msg.substring(0, 80);
 }
-const VERSION = '0.1.6';
-document.title = `ToBe v${VERSION}`;
-debug(`ToBe v${VERSION} loaded`);
+let VERSION = '';
+document.title = 'ToBe';
+debug('loading');
 
 let settings = null;
 let subscriptions = [];
@@ -63,7 +63,9 @@ function loadChannelVideosMore() {
 
 async function init() {
   debug('init started');
-  try { settings = await invoke('get_settings'); applySettings(); subscriptions = await getSubscriptions(); renderSubscriptions(); showView('feed'); getFeedView().load(true); }
+  try { VERSION = await getAppVersion(); document.title = `ToBe v${VERSION}`; debug(`ToBe v${VERSION} loaded`);
+    const sh = document.querySelector('.sidebar-header h1'); if (sh) sh.innerHTML = `ToBe <span style="font-size:10px;color:#666;">v${VERSION}</span>`;
+    settings = await invoke('get_settings'); applySettings(); subscriptions = await getSubscriptions(); renderSubscriptions(); showView('feed'); getFeedView().load(true); }
   catch (err) { debug('Init error: ' + err); }
 }
 

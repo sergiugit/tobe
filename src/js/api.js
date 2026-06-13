@@ -17,6 +17,10 @@ export async function updateSubscriptionAvatar(channelId, channelAvatar) {
   return await invoke('update_subscription_avatar', { channelId, channelAvatar });
 }
 
+export async function getAppVersion() {
+  return await invoke('get_app_version');
+}
+
 export async function getChannelVideos(channelId, page, invidiousInstance) {
   return await invoke('get_channel_videos', { channelId, page, invidiousInstance });
 }

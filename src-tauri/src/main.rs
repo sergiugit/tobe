@@ -7,8 +7,7 @@ use std::path::PathBuf;
 use tauri::Manager;
 
 fn main() {
-    const VERSION: &str = "0.1.6";
-    eprintln!("[MAIN] ToBe v{} starting", VERSION);
+    eprintln!("[MAIN] ToBe v{} starting", env!("CARGO_PKG_VERSION"));
     tauri::Builder::default()
         .setup(|app| {
             let app_data = dirs::data_local_dir()
@@ -98,6 +97,7 @@ fn main() {
             get_comments,
             clear_video_cache,
             log_message,
+            get_app_version,
             fetch_more_channel_videos,
         ])
         .run(tauri::generate_context!())
