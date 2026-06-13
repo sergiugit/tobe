@@ -243,7 +243,7 @@ pub async fn get_video_url(
     let full_path = format!("{}:{}", extra_path, std::env::var("PATH").unwrap_or_default());
     let output = tokio::process::Command::new(yt_dlp)
         .env("PATH", &full_path)
-        .args(["--cookies-from-browser", "firefox", "--js-runtimes", &format!("node:{}", node_path), "-f", fmt, "-g", &url])
+        .args(["-f", fmt, "-g", &url])
         .output()
         .await
         .map_err(|e| format!("yt-dlp not found: {}", e))?;
@@ -269,7 +269,7 @@ pub async fn get_video_formats(
     let full_path = format!("{}:{}", extra_path, std::env::var("PATH").unwrap_or_default());
     let output = tokio::process::Command::new(yt_dlp)
         .env("PATH", &full_path)
-        .args(["--cookies-from-browser", "firefox", "--js-runtimes", &format!("node:{}", node_path), "--dump-json", "--skip-download", &url])
+        .args(["--dump-json", "--skip-download", &url])
         .output()
         .await
         .map_err(|e| format!("yt-dlp not found: {}", e))?;
