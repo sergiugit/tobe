@@ -4,12 +4,16 @@ A privacy-focused YouTube client for desktop. Browse, search, and watch YouTube 
 
 ## Features
 
+![All Subscriptions feed](images/All_Sub.jpg)
+
 - **Subscription feed** — latest videos from all your subscribed channels in one place
 - **Channel browsing** — view channel videos, live streams, and info
 - **Video playback** — with resolution switching and autoplay
 - **Search & subscribe** — find and follow channels
 - **Privacy** — uses InnerTube API directly (no YouTube OAuth, no tracking scripts)
 - **Light/dark theme**
+
+![Video player](images/play.jpg)
 
 ## How it works
 
