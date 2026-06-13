@@ -1,9 +1,12 @@
 app-id: com.tobe.app
-# Bump runtime-version to the latest stable GNOME Platform on Flathub.
-# Check available versions: flatpak remote-ls flathub org.gnome.Platform
-runtime: org.gnome.Platform
-runtime-version: '46'
-sdk: org.gnome.Sdk
+# Uses Freedesktop runtime (not GNOME) — no GNOME dependency,
+# works on any desktop. WebKitGTK provided via SDK extension.
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.webkitgtk-6.0
 command: tobe
 
 finish-args:
@@ -19,6 +22,7 @@ build-options:
   append-path: /usr/lib/sdk/rust-stable/bin
   env:
     CARGO_HOME: /run/build/tobe/cargo
+    PKG_CONFIG_PATH: /usr/lib/sdk/webkitgtk-6.0/lib/pkgconfig
 
 modules:
   - name: tobe
