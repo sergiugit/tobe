@@ -5,7 +5,7 @@
   "identifier": "com.tobe.app",
   "build": {
     "beforeBuildCommand": "",
-    "frontendDist": "/home/sergiu/.hermes/workspace/tobe/dist"
+    "frontendDist": "../dist"
   },
   "app": {
     "windows": [

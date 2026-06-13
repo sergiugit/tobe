@@ -1,0 +1,38 @@
+app-id: com.tobe.app
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: tobe
+
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+  - --filesystem=home
+  - --socket=pulseaudio
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin
+  env:
+    CARGO_HOME: /run/build/tobe/cargo
+
+modules:
+  - name: tobe
+    buildsystem: simple
+    build-commands:
+      - cargo fetch --manifest-path src-tauri/Cargo.toml
+      - cargo build --release --manifest-path src-tauri/Cargo.toml
+      - cp src-tauri/target/release/tobe .
+      - install -Dm755 tobe /app/bin/tobe
+      - install -Dm644 src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.tobe.app.png
+      - install -Dm644 src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.tobe.app.png
+      - install -Dm644 com.tobe.app.desktop /app/share/applications/com.tobe.app.desktop
+      - install -Dm644 com.tobe.app.appdata.xml /app/share/metainfo/com.tobe.app.appdata.xml
+    sources:
+      - type: dir
+        path: .
+    cleanup:
+      - /cargo
+      - /lib/.build-id
