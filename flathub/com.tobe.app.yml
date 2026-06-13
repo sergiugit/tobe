@@ -1,4 +1,6 @@
 app-id: com.tobe.app
+# Bump runtime-version to the latest stable GNOME Platform on Flathub.
+# Check available versions: flatpak remote-ls flathub org.gnome.Platform
 runtime: org.gnome.Platform
 runtime-version: '46'
 sdk: org.gnome.Sdk
