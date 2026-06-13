@@ -1,0 +1,33 @@
+# Rust build artifacts
+src-tauri/target/
+*.o
+
+# Built binary
+/tobe
+
+# Node
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Backups
+back/
+dist/src/
+
+# Personal notes
+DESIGN.md
+Projects.txt
+Status.txt
+
+# Build artifacts
+*.tar.gz
+*.jpeg
+start.sh

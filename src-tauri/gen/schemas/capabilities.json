@@ -1,0 +1,1 @@
+{"com.tobe.app":{"identifier":"com.tobe.app","description":"Tobe capabilities","local":true,"windows":["main"],"permissions":["core:default","core:path:default","core:path:allow-join","core:path:allow-resolve","core:path:allow-normalize","core:window:default","core:window:allow-create","core:webview:default","core:webview:allow-create-webview-window"]}}

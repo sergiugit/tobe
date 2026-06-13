@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToBe</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/sidebar.css">
+  <link rel="stylesheet" href="styles/video.css">
+  <link rel="stylesheet" href="styles/suggestions.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h1>ToBe <span style="font-size:10px;color:#666;">v0.1.6</span></h1>
+        <button id="btn-settings" title="Settings">⚙</button>
+      </div>
+      <div class="sidebar-search">
+        <button id="btn-all-subs" class="sidebar-all-btn">All Subscriptions</button>
+        <button id="btn-add-sub">+</button>
+      </div>
+      <div id="subscription-list" class="subscription-list">
+        <!-- Populated by JS -->
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <!-- Feed View -->
+      <div id="feed-view" class="view active">
+        <div class="view-header">
+          <h2>All Subscriptions</h2>
+          <div class="sort-controls">
+            <select id="sort-select">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="popular">Most popular</option>
+            </select>
+          </div>
+        </div>
+        <div id="video-feed" class="video-grid">
+          <!-- Populated by JS -->
+        </div>
+        <div id="feed-loading" class="loading hidden">Loading...</div>
+      </div>
+
+      <!-- Channel View -->
+      <div id="channel-view" class="view hidden">
+        <div id="channel-header" class="channel-header">
+          <!-- Populated by JS -->
+        </div>
+        <div class="channel-tabs">
+          <button class="tab active" data-tab="history">History</button>
+          <button class="tab" data-tab="live">Live</button>
+        </div>
+        <div id="channel-videos" class="video-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Player View -->
+      <div id="player-view" class="view hidden">
+        <button id="btn-back" class="back-button">← Back</button>
+        <div class="player-layout">
+          <div class="player-main">
+            <div id="video-player-container">
+              <video id="video-player" controls autoplay></video>
+            </div>
+            <div id="video-info" class="video-info">
+              <!-- Populated by JS -->
+            </div>
+            <div id="comments-section" class="comments-section">
+              <h3>Comments</h3>
+              <div id="comments-list"></div>
+            </div>
+          </div>
+          <aside id="suggestions-panel" class="suggestions-panel">
+            <h3>Suggestions</h3>
+            <div id="suggestions-list">
+              <!-- Populated by JS -->
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Settings View -->
+      <div id="settings-view" class="view hidden">
+        <h2>Settings</h2>
+        <div class="settings-form">
+          <label>
+            Invidious Instance
+            <input type="text" id="setting-invidious" placeholder="https://inv.nadeko.net">
+          </label>
+          <label>
+            Default Sort
+            <select id="setting-sort">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="popular">Most popular</option>
+            </select>
+          </label>
+          <label>
+            Theme
+            <select id="setting-theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" id="setting-autoplay" checked>
+            Autoplay next video
+          </label>
+          <button id="btn-save-settings">Save Settings</button>
+          <div style="margin-top:24px;padding-top:16px;border-top:1px solid #333;color:#666;font-size:12px;">
+            ToBe v<span id="app-version">0.1.5</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Subscription Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h3>Add Subscription</h3>
+      <input type="text" id="modal-channel-input" placeholder="Channel URL or ID">
+      <div id="modal-search-results" class="search-results"></div>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel">Cancel</button>
+        <button id="btn-modal-add" disabled>Subscribe</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
