@@ -29,6 +29,7 @@ pub(crate) fn yt_dlp_path() -> &'static str {
     static PATH: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     PATH.get_or_init(|| {
         for candidate in &[
+            "/app/bin/yt-dlp",
             "/home/sergiu/.local/bin/yt-dlp",
             "/usr/local/bin/yt-dlp",
             "/usr/bin/yt-dlp",
@@ -322,9 +323,7 @@ async fn search_channels_ytdlp(query: &str) -> Result<Vec<Channel>, String> {
     let full_path = format!("{}:{}", extra_path, std::env::var("PATH").unwrap_or_default());
     let output = tokio::process::Command::new(yt_dlp)
         .env("PATH", &full_path)
-        .args([
-            "--cookies-from-browser", "firefox",
-            "--js-runtimes", "node:node",
+        .args(["--remote-components", "ejs:github",
             "--flat-playlist",
             "--dump-json",
             &format!("ytsearch10:{}", query),
@@ -631,7 +630,7 @@ async fn get_suggestions_ytdlp(query: &str) -> Result<Vec<Video>, String> {
     let full_path = format!("{}:{}", extra_path, std::env::var("PATH").unwrap_or_default());
     let output = tokio::process::Command::new(yt_dlp)
         .env("PATH", &full_path)
-        .args(["--cookies-from-browser", "firefox", "--js-runtimes", "node:node", "--flat-playlist", "--dump-json", "--playlist-end", "15", &search_url])
+        .args(["--remote-components", "ejs:github", "--flat-playlist", "--dump-json", "--playlist-end", "15", &search_url])
         .output()
         .await
         .map_err(|e| format!("yt-dlp not found: {}", e))?;
