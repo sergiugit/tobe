@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.tobe.app</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Tobe</name>
+  <summary>A privacy-focused YouTube client</summary>
+  <description>
+    <p>Tobe is a FreeTube-like YouTube client built with Tauri. It provides a privacy-focused YouTube viewing experience with no tracking or ads.</p>
+  </description>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Network</category>
+  </categories>
+  <url type="homepage">https://github.com/sergiugit/tobe</url>
+  <url type="bugtracker">https://github.com/sergiugit/tobe/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/sergiugit/tobe/main/images/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="0.1.7" date="2026-06-14"/>
+  </releases>
+</component>
