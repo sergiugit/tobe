@@ -39,6 +39,40 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ""
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
 
+      - name: Fix .DirIcon symlink in AppImage
+        run: |
+          APPIMAGE=$(ls src-tauri/target/release/bundle/appimage/*.AppImage | head -1)
+          APPDIR=src-tauri/target/release/bundle/appimage/Tobe.AppDir
+
+          # Fix the .DirIcon symlink from absolute to relative
+          if [ -L "$APPDIR/.DirIcon" ]; then
+            TARGET=$(readlink "$APPDIR/.DirIcon")
+            BASENAME=$(basename "$TARGET")
+            if [ "$TARGET" != "$BASENAME" ]; then
+              rm "$APPDIR/.DirIcon"
+              ln -s "$BASENAME" "$APPDIR/.DirIcon"
+              echo "Fixed .DirIcon: $TARGET -> $BASENAME"
+            fi
+          fi
+
+          # Also set categories if missing
+          DESKTOP_FILE=$(ls "$APPDIR"/*.desktop 2>/dev/null | head -1)
+          if [ -n "$DESKTOP_FILE" ] && ! grep -q "^Categories=" "$DESKTOP_FILE"; then
+            echo "Categories=AudioVideo;Network;" >> "$DESKTOP_FILE"
+            echo "Fixed missing Categories in desktop file"
+          fi
+
+          # Rebuild AppImage from fixed AppDir
+          if command -v appimagetool &>/dev/null; then
+            appimagetool --no-appstream "$APPDIR" "$APPIMAGE"
+          else
+            # Download appimagetool if not available
+            wget -q -O /tmp/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+            chmod +x /tmp/appimagetool
+            /tmp/appimagetool --no-appstream "$APPDIR" "$APPIMAGE"
+          fi
+          echo "Repacked: $(ls -lh $APPIMAGE)"
+
       - name: Upload AppImage as release asset
         env:
           GH_TOKEN: ${{ github.token }}
