@@ -55,21 +55,23 @@ jobs:
             fi
           fi
 
-          # Also set categories if missing
+          # Ensure desktop file has Categories
           DESKTOP_FILE=$(ls "$APPDIR"/*.desktop 2>/dev/null | head -1)
           if [ -n "$DESKTOP_FILE" ] && ! grep -q "^Categories=" "$DESKTOP_FILE"; then
             echo "Categories=AudioVideo;Network;" >> "$DESKTOP_FILE"
             echo "Fixed missing Categories in desktop file"
           fi
 
-          # Rebuild AppImage from fixed AppDir
+          # Rebuild AppImage from fixed AppDir without requiring FUSE
           if command -v appimagetool &>/dev/null; then
             appimagetool --no-appstream "$APPDIR" "$APPIMAGE"
           else
-            # Download appimagetool if not available
-            wget -q -O /tmp/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+            # Use mksquashfs directly to avoid FUSE dependency
+            wget -q -O /tmp/appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
             chmod +x /tmp/appimagetool
-            /tmp/appimagetool --no-appstream "$APPDIR" "$APPIMAGE"
+            # Extract appimagetool without FUSE, then run it directly
+            /tmp/appimagetool --appimage-extract > /dev/null 2>&1
+            ./squashfs-root/AppRun --no-appstream "$APPDIR" "$APPIMAGE"
           fi
           echo "Repacked: $(ls -lh $APPIMAGE)"
 
