@@ -62,6 +62,12 @@ jobs:
             echo "Fixed missing Categories in desktop file"
           fi
 
+          # Fix permissions on AppRun.wrapped (firejail runs as "other" user)
+          if [ -f "$APPDIR/AppRun.wrapped" ]; then
+            chmod +x "$APPDIR/AppRun.wrapped"
+            echo "Fixed AppRun.wrapped permissions: $(stat -c '%A' "$APPDIR/AppRun.wrapped")"
+          fi
+
           # Rebuild AppImage from fixed AppDir without requiring FUSE
           if command -v appimagetool &>/dev/null; then
             appimagetool --no-appstream "$APPDIR" "$APPIMAGE"
