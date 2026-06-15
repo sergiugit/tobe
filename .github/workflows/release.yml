@@ -83,3 +83,4 @@ jobs:
             --title "Tobe ${{ github.ref_name }}" \
             --notes "Release ${{ github.ref_name }}" \
             "$APPIMAGE"
+

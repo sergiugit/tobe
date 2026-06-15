@@ -65,6 +65,7 @@ async function init() {
   debug('init started');
   try { VERSION = await getAppVersion(); document.title = `ToBe v${VERSION}`; debug(`ToBe v${VERSION} loaded`);
     const sh = document.querySelector('.sidebar-header h1'); if (sh) sh.innerHTML = `ToBe <span style="font-size:10px;color:#666;">v${VERSION}</span>`;
+    const av = document.getElementById('app-version'); if (av) av.textContent = VERSION;
     settings = await invoke('get_settings'); applySettings(); subscriptions = await getSubscriptions(); renderSubscriptions(); showView('feed'); getFeedView().load(true); }
   catch (err) { debug('Init error: ' + err); }
 }
