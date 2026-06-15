@@ -80,9 +80,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           APPIMAGE=$(ls src-tauri/target/release/bundle/appimage/*.AppImage | head -1)
+          APPNAME=$(basename "$APPIMAGE")
           gh release create "${{ github.ref_name }}" \
             --repo "${{ github.repository }}" \
             --title "Tobe ${{ github.ref_name }}" \
             --notes "Release ${{ github.ref_name }}" \
-            "$APPIMAGE"
+            "$APPIMAGE" 2>/dev/null || \
+          (echo "Release exists, uploading asset..." && \
+           gh release upload "${{ github.ref_name }}" "$APPIMAGE" \
+             --repo "${{ github.repository }}" --overwrite --clobber)
 
