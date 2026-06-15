@@ -180,7 +180,6 @@ pub async fn get_subscribed_feed(
         for handle in handles {
             match handle.await {
                 Ok((channel_id, Ok(videos))) => {
-                    eprintln!("[feed] channel {}: {} videos", channel_id, videos.len());
                     all_videos.extend(videos);
                 }
                 Ok((channel_id, Err(e))) => {
@@ -189,7 +188,6 @@ pub async fn get_subscribed_feed(
                 _ => {}
             }
         }
-        eprintln!("[feed] total videos after parallel fetch: {}", all_videos.len());
     }
 
     // Sort by published_at descending (newest first)

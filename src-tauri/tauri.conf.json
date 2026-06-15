@@ -35,7 +35,9 @@
       "icons/icon.ico"
     ],
     "linux": {
-      "categories": "AudioVideo;Network;"
+      "deb": {
+        "files": {}
+      }
     }
   }
 }

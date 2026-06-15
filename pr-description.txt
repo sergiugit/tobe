@@ -1,0 +1,16 @@
+Please confirm your submission meets all the criteria
+
+**Please describe the application briefly.**
+Tobe is a privacy-focused YouTube client for desktop. It lets you browse, search, and watch YouTube videos without ads, tracking, or a Google account. It uses the InnerTube API directly (no third-party APIs or tracking scripts) and yt-dlp for video streaming. Built with Tauri v2 (Rust backend, vanilla JS frontend). Source code: https://github.com/sergiugit/tobe
+
+**Please attach a video showcasing the application on Linux using the Flatpak.**
+(I will add a screen recording shortly)
+
+**The Flatpak ID follows all the rules listed in the Application ID requirements.**
+Yes — `com.tobe.app` follows reverse-domain format. The identifier matches the application's Tauri configuration and the existing app data directory.
+
+**I have read and followed all the Submission requirements and the Submission guide and I agree to them.**
+Yes.
+
+**I am an (please keep whichever is applicable and remove the rest) author/developer/upstream contributor to the project.**
+I am the developer of this application.

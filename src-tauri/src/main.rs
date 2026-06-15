@@ -7,13 +7,11 @@ use std::path::PathBuf;
 use tauri::Manager;
 
 fn main() {
-    eprintln!("[MAIN] ToBe v{} starting", env!("CARGO_PKG_VERSION"));
     tauri::Builder::default()
         .setup(|app| {
             let app_data = dirs::data_local_dir()
                 .unwrap_or_else(|| PathBuf::from("/tmp"))
                 .join("com.tobe.app");
-            eprintln!("[MAIN] app_data_dir = {:?}", app_data);
             std::fs::create_dir_all(&app_data)?;
 
             // Set window icon and install .desktop file on Linux

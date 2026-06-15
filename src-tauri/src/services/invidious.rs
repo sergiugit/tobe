@@ -169,7 +169,7 @@ impl InvidiousClient {
                 }
             }
         }
-        // Fallback to InnerTube search
+        // Final fallback to InnerTube search (even if first attempt was empty)
         let innertube_url = format!("https://www.youtube.com/youtubei/v1/search?key={}", INNERTUBE_API_KEY);
         let body = serde_json::json!({
             "query": query,
@@ -247,29 +247,40 @@ impl InvidiousClient {
     }
 
     pub async fn search_channels(&self, query: &str) -> Result<Vec<Channel>, String> {
+        // Try Invidious API first
         let url = self.api_url(&format!("/search?q={}&type=channel", urlencoding::encode(query)));
-        let resp = self.client.get(&url).send().await.map_err(|e| e.to_string())?;
-        let text = resp.text().await.map_err(|e| e.to_string())?;
-        if !text.trim_start().starts_with('[') {
-            // Fallback to yt-dlp for search
-            return search_channels_ytdlp(query).await;
+        if let Ok(resp) = self.client.get(&url).send().await {
+            if let Ok(text) = resp.text().await {
+                if text.trim_start().starts_with('[') {
+                    if let Ok(json) = serde_json::from_str::<Vec<serde_json::Value>>(&text) {
+                        let channels: Vec<Channel> = json.iter().filter_map(|r| {
+                            let channel_id = r["authorId"].as_str()?;
+                            Some(Channel {
+                                channel_id: channel_id.to_string(),
+                                channel_name: r["author"].as_str().unwrap_or("Unknown").to_string(),
+                                channel_avatar: r["authorThumbnails"].as_array()
+                                    .and_then(|arr| arr.last())
+                                    .and_then(|t| t["url"].as_str())
+                                    .unwrap_or("")
+                                    .to_string(),
+                                subscriber_count: 0,
+                                description: "".to_string(),
+                            })
+                        }).collect();
+                        if !channels.is_empty() {
+                            return Ok(channels);
+                        }
+                    }
+                }
+            }
         }
-        let json: serde_json::Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
-        let results = json.as_array().unwrap();
-        Ok(results.iter().filter_map(|r| {
-            let channel_id = r["authorId"].as_str()?;
-            Some(Channel {
-                channel_id: channel_id.to_string(),
-                channel_name: r["author"].as_str().unwrap_or("Unknown").to_string(),
-                channel_avatar: r["authorThumbnails"].as_array()
-                    .and_then(|arr| arr.last())
-                    .and_then(|t| t["url"].as_str())
-                    .unwrap_or("")
-                    .to_string(),
-                subscriber_count: 0,
-                description: "".to_string(),
-            })
-        }).collect())
+        // Fallback: InnerTube search + parse channelRenderer
+        match search_channels_innertube(query).await {
+            Ok(channels) if !channels.is_empty() => return Ok(channels),
+            _ => {}
+        }
+        // Final fallback: yt-dlp
+        search_channels_ytdlp(query).await
     }
 
     pub async fn get_comments(&self, video_id: &str) -> Result<crate::models::CommentsResponse, String> {
@@ -359,6 +370,72 @@ async fn search_channels_ytdlp(query: &str) -> Result<Vec<Channel>, String> {
 
     if channels.is_empty() {
         return Err("No channels found".to_string());
+    }
+    Ok(channels)
+}
+
+/// InnerTube search for channels — queries YouTube's search API and parses channelRenderer items.
+async fn search_channels_innertube(query: &str) -> Result<Vec<Channel>, String> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .user_agent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    let url = format!("https://www.youtube.com/youtubei/v1/search?key={}", INNERTUBE_API_KEY);
+    let body = serde_json::json!({
+        "query": query,
+        "context": {
+            "client": {
+                "clientName": "WEB",
+                "clientVersion": "2.20260206.01.00",
+                "hl": "en",
+                "gl": "US"
+            }
+        }
+    });
+
+    let resp = client.post(&url)
+        .header("Content-Type", "application/json")
+        .header("Origin", "https://www.youtube.com")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("InnerTube search failed: {}", e))?;
+
+    let json: serde_json::Value = resp.json().await.map_err(|e| format!("InnerTube parse failed: {}", e))?;
+
+    let mut channels = Vec::new();
+
+    if let Some(contents) = json["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"]["sectionListRenderer"]["contents"].as_array() {
+        for section in contents {
+            if let Some(items) = section["itemSectionRenderer"]["contents"].as_array() {
+                for item in items {
+                    if let Some(cr) = item.get("channelRenderer") {
+                        if let Some(channel_id) = cr["channelId"].as_str() {
+                            let channel_name = cr["title"]["simpleText"].as_str()
+                                .or_else(|| cr["title"]["runs"].as_array().and_then(|r| r.first()).and_then(|r| r["text"].as_str()))
+                                .unwrap_or("Unknown");
+                            let avatar = cr["thumbnail"]["thumbnails"].as_array()
+                                .and_then(|t| t.last())
+                                .and_then(|t| t["url"].as_str())
+                                .unwrap_or("");
+                            channels.push(Channel {
+                                channel_id: channel_id.to_string(),
+                                channel_name: channel_name.to_string(),
+                                channel_avatar: if avatar.starts_with("//") { format!("https:{}", avatar) } else { avatar.to_string() },
+                                subscriber_count: 0,
+                                description: String::new(),
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if channels.is_empty() {
+        return Err("No channels found via InnerTube search".to_string());
     }
     Ok(channels)
 }
